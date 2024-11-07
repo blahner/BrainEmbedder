@@ -49,7 +49,7 @@
         // Fetch data points from the JSON file
         async function loadPoints() {
             try {
-                const response = await fetch('/data/umap/V4/ROIs-V4_n-100.json');
+                const response = await fetch('./data/umap/V4/ROIs-V4_n-100.json');
                 const points = await response.json();
 
                 // Plot points on the graph
