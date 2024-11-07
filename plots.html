@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hover to View Images</title>
+    <style>
+        #plot-container {
+            display: flex;
+        }
+        #graph {
+            width: 70%;
+            height: 500px;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        #image-display {
+            width: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #image-display img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        .point {
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div id="plot-container">
+        <div id="graph"></div>
+        <div id="image-display">
+            <img id="hover-image" src="" alt="Hover Image">
+        </div>
+    </div>
+
+    <script>
+        const graph = document.getElementById('graph');
+        const hoverImage = document.getElementById('hover-image');
+
+        // Fetch data points from the JSON file
+        async function loadPoints() {
+            try {
+                const response = await fetch('/data/umap/V4/ROIs-V4_n-100.json');
+                const points = await response.json();
+
+                // Plot points on the graph
+                plotPoints(points);
+            } catch (error) {
+                console.error('Error loading points:', error);
+            }
+        }
+
+        // Function to create points on the graph
+        function plotPoints(points) {
+            points.forEach(point => {
+                const pointElement = document.createElement('div');
+                pointElement.classList.add('point');
+                pointElement.style.left = `${point.x}px`;
+                pointElement.style.top = `${point.y}px`;
+
+                // Add hover event
+                pointElement.addEventListener('mouseenter', () => {
+                    hoverImage.src = point.imagePath;
+                    hoverImage.style.display = 'block';
+                });
+                pointElement.addEventListener('mouseleave', () => {
+                    hoverImage.style.display = 'none';
+                });
+
+                graph.appendChild(pointElement);
+            });
+        }
+
+        // Load points on page load
+        loadPoints();
+    </script>
+</body>
+</html>
