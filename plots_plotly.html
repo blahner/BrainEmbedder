@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plot with Image Hover</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        #image-display {
+            width: 300px;
+            height: 300px;
+            margin-left: 30px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="graph" style="width: 70%; height: 500px; display: inline-block;"></div>
+    <div id="image-display" style="display: inline-block;">
+        <p id="hover-text">Hover over a point to see the stimulus.</p>
+        <p id="hover-seenby">Hover over a point to see which subject viewed the stimulus.</p>
+        <img id="hover-image" src="" alt="Image will appear here" width="300" height="300">
+    </div>
+
+    <script>
+        // Function to fetch and load the JSON data
+        async function loadData() {
+            const response = await fetch('./data/umap/ROIs-V1_n-1000.json');  // Adjust path to your JSON file
+            const data = await response.json();
+            // Extract relevant data from the JSON
+            const stimulusFilenames = data.map(item => item.stimulus_filename);
+            const xCoords = data.map(item => item.X);
+            const yCoords = data.map(item => item.Y);
+            const subjectID = data.map(item => item.subject_id);
+            const hoverText = stimulusFilenames.map((filename, index) => 
+                `${filename} (Subject: ${subjectID[index]})`
+            );
+            // Create the Plotly trace for the scatter plot
+            const trace = {
+                x: xCoords,
+                y: yCoords,
+                text: hoverText, // Use stimulus filenames as hover text
+                subjectID: subjectID,
+                mode: 'markers',
+                type: 'scatter',
+                hoverinfo: 'none', // Only show text on hover
+                marker: { size: 12, color: 'blue' }
+            };
+
+            const layout = {
+                title: 'Interactive Scatter Plot',
+                xaxis: { title: 'UMAP X' },
+                yaxis: { title: 'UMAP Y' },
+                hovermode: 'closest', // Hover shows closest point
+                dragmode: 'zoom' // Allow zoom and pan
+            };
+
+            // Plot the graph with Plotly
+            Plotly.newPlot('graph', [trace], layout);
+
+            // Add hover functionality to display the image
+            const graph = document.getElementById('graph');
+            graph.on('plotly_hover', function(eventData) {
+                // Extract the filename and subject ID from hover text
+                const hoverInfo = eventData.points[0].text;
+                const [filename, subject] = hoverInfo.split(' (Subject: ');
+                const imgPath = './data/stimuli_compressed_quality-30_size-112/' + filename; // Assuming images are in this folder
+                document.getElementById('hover-image').src = imgPath; // Update the image display
+                document.getElementById('hover-text').innerHTML = filename; // Show the filename above the image
+                document.getElementById('hover-seenby').innerHTML = `Seen by: ${subject.replace(')', '')}`; // Show the filename above the image
+
+            });
+
+            graph.on('plotly_unhover', function() {
+                document.getElementById('hover-image').src = ''; // Clear image when no point is hovered
+                document.getElementById('hover-text').innerHTML = "Hover over a point to see the stimulus."; // Reset the text
+                document.getElementById('hover-seenby').innerHTML = "Hover over a point to see which subject viewed the stimulus."; // Reset the text
+            });
+        }
+
+        // Load data and plot the graph when the page loads
+        loadData();
+    </script>
+
+</body>
+</html>

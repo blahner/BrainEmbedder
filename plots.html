@@ -51,7 +51,7 @@
             try {
                 const response = await fetch('./data/umap/V4/ROIs-V4_n-100.json');
                 const points = await response.json();
-
+                console.log(points)
                 // Plot points on the graph
                 plotPoints(points);
             } catch (error) {
@@ -69,7 +69,7 @@
 
                 // Add hover event
                 pointElement.addEventListener('mouseenter', () => {
-                    hoverImage.src = point.imagePath;
+                    hoverImage.src = `./data/stimuli_compressed/${point.stimulus_filename}`;
                     hoverImage.style.display = 'block';
                 });
                 pointElement.addEventListener('mouseleave', () => {
