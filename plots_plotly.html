@@ -65,7 +65,7 @@
                 // Extract the filename and subject ID from hover text
                 const hoverInfo = eventData.points[0].text;
                 const [filename, subject] = hoverInfo.split(' (Subject: ');
-                const imgPath = './data/stimuli_compressed_quality-30_size-112/' + filename; // Assuming images are in this folder
+                const imgPath = './data/stimuli/stimuli_compressed_quality-95_size-64/' + filename; // Assuming images are in this folder
                 document.getElementById('hover-image').src = imgPath; // Update the image display
                 document.getElementById('hover-text').innerHTML = filename; // Show the filename above the image
                 document.getElementById('hover-seenby').innerHTML = `Seen by: ${subject.replace(')', '')}`; // Show the filename above the image
