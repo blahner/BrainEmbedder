@@ -26,7 +26,7 @@
     <script>
         // Function to fetch and load the JSON data
         async function loadData() {
-            const response = await fetch('./data/tsne/ROIs-LO1-LO2_n-200_tsne.json');  // Adjust path to your JSON file
+            const response = await fetch('./data/tsne/ROIs-LO1-LO2_subjects-sub-01_NSD-sub-01_BMD_n-200_tsne.json');  // Adjust path to your JSON file
             const data = await response.json();
             // Extract relevant data from the JSON
             const stimulusFilenames = data.map(item => item.stimulus_filename);
